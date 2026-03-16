@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUDGET BOSS</title>
+<link href="https://fonts.googleapis.com/css2?family=Itim&family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf6ec;
+  --card:#ffffff;
+  --ink:#1a1a2e;
+  --soft:#6b7280;
+  --border:#e5e0d8;
+
+  --blue:#3b82f6;
+  --blue-l:#eff6ff;
+  --green:#16a34a;
+  --green-l:#f0fdf4;
+  --red:#dc2626;
+  --red-l:#fef2f2;
+  --yellow:#d97706;
+  --yellow-l:#fffbeb;
+  --purple:#7c3aed;
+  --purple-l:#f5f3ff;
+  --pink:#db2777;
+  --pink-l:#fdf2f8;
+  --orange:#ea580c;
+  --orange-l:#fff7ed;
+  --teal:#0d9488;
+  --teal-l:#f0fdfa;
+
+  --r:14px;
+  --r-lg:20px;
+  --shadow:0 4px 16px rgba(0,0,0,.08);
+  --shadow-sm:0 2px 8px rgba(0,0,0,.06);
+
+  --font-display:'Itim',cursive;
+  --font-body:'Noto Sans Thai',sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;background:var(--bg)}
+body{font-family:var(--font-body);color:var(--ink);min-height:100vh}
+
+/* ── UTIL ── */
+.screen{display:none;min-height:100vh;flex-direction:column;animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
+.screen.on{display:flex}
+@keyframes popIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font-body);font-size:14px;font-weight:700;
+  padding:12px 24px;border-radius:var(--r);border:2.5px solid var(--ink);
+  background:var(--card);color:var(--ink);cursor:pointer;
+  box-shadow:3px 3px 0 var(--ink);
+  transition:all .12s;user-select:none;
+}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn-fill{background:var(--ink);color:#fff}
+.btn-fill:hover{background:#2d2d2d}
+.btn-green{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-green:hover{background:#15803d}
+.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:700;padding:4px 11px;
+  border-radius:40px;border:2px solid currentColor;
+}
+.chip-blue{color:var(--blue);background:var(--blue-l)}
+.chip-green{color:var(--green);background:var(--green-l)}
+.chip-red{color:var(--red);background:var(--red-l)}
+.chip-yellow{color:var(--yellow);background:var(--yellow-l)}
+.chip-purple{color:var(--purple);background:var(--purple-l)}
+.chip-soft{color:var(--soft);background:#f3f4f6;border-color:var(--border)}
+
+.tag{
+  display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;
+  border-radius:6px;background:var(--blue-l);color:var(--blue);
+}
+
+/* ══════════════════
+  SCREEN 0 — INTRO
+══════════════════ */
+#s0{
+  background:linear-gradient(160deg,#fff8ee 0%,#e8f4ff 100%);
+  align-items:center;justify-content:center;gap:1.5rem;
+  padding:2rem 1.25rem;text-align:center;
+}
+.logo-wrap{
+  width:90px;height:90px;border-radius:50%;
+  background:var(--yellow);border:3px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;
+  box-shadow:4px 4px 0 var(--ink);
+  animation:wiggle 3s ease-in-out infinite;
+}
+@keyframes wiggle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.game-title{
+  font-family:var(--font-display);font-size:clamp(2.2rem,8vw,3.5rem);
+  color:var(--ink);line-height:1;letter-spacing:.01em;
+}
+.game-title span{color:var(--green)}
+.intro-desc{font-size:14px;color:var(--soft);max-width:400px;line-height:1.7}
+.intro-steps{
+  display:flex;flex-direction:column;gap:10px;
+  max-width:360px;width:100%;
+}
+.step-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:2px solid var(--border);
+  border-radius:var(--r);padding:.75rem 1rem;
+  box-shadow:var(--shadow-sm);
+}
+.step-num{
+  width:32px;height:32px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:16px;font-weight:700;
+  border:2px solid var(--ink);flex-shrink:0;
+}
+.step-text{font-size:13px;font-weight:500;text-align:left}
+.intro-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* ══════════════════
+  TOPBAR (in-game)
+══════════════════ */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px;
+  background:var(--card);
+  border-bottom:2.5px solid var(--ink);
+  position:sticky;top:0;z-index:100;
+  gap:8px;flex-wrap:wrap;
+}
+.tb-logo{font-family:var(--font-display);font-size:17px;color:var(--ink)}
+.tb-logo span{color:var(--green)}
+.tb-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* money bar */
+.money-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--green-l);border:2px solid var(--green);
+  border-radius:40px;padding:5px 14px;
+}
+.money-icon{font-size:16px}
+.money-amount{font-family:var(--font-display);font-size:16px;color:var(--green);font-weight:700}
+
+/* ══════════════════
+  SCREEN 1 — GAME
+══════════════════ */
+#s1{background:var(--bg)}
+.game-body{
+  flex:1;display:grid;
+  grid-template-columns:1fr 280px;
+  gap:16px;
+  padding:16px;
+  max-width:900px;margin:0 auto;width:100%;
+}
+
+/* Progress dots */
+.progress-row{
+  grid-column:1/-1;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.prog-dot{
+  width:36px;height:36px;border-radius:50%;
+  border:2.5px solid var(--border);background:var(--card);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:15px;color:var(--soft);
+  transition:all .2s;flex-shrink:0;
+}
+.prog-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.prog-dot.current{background:var(--blue);border-color:var(--blue);color:#fff;
+  width:40px;height:40px;font-size:17px;
+  box-shadow:0 0 0 4px rgba(59,130,246,.2);
+}
+.prog-line{flex:1;height:3px;background:var(--border);border-radius:2px;min-width:16px}
+.prog-label{font-size:12px;font-weight:700;color:var(--soft)}
+
+/* Situation card */
+.sit-card{
+  background:var(--card);border:2.5px solid var(--ink);
+  border-radius:var(--r-lg);box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.sit-header{padding:1.1rem 1.25rem;border-bottom:2px solid var(--border)}
+.sit-emoji-row{display:flex;align-items:center;gap:10px;margin-bottom:.6rem}
+.sit-emoji{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;border:2px solid var(--ink);flex-shrink:0;
+}
+.sit-meta{flex:1}
+.sit-tag-row{display:flex;gap:5px;margin-bottom:3px;flex-wrap:wrap}
+.sit-title{font-family:var(--font-display);font-size:1.15rem;color:var(--ink)}
+.sit-body{padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:.85rem}
+.sit-desc{font-size:13.5px;color:var(--soft);line-height:1.7}
+.sit-scenario{
+  background:var(--yellow-l);border:2px solid #fcd34d;
+  border-radius:var(--r);padding:.75rem 1rem;
+  font-size:13px;color:var(--yellow);font-weight:500;line-height:1.6;
+}
+.sit-q{font-size:13.5px;font-weight:700;color:var(--ink);padding:.25rem 0}
+
+/* Options */
+.options-wrap{display:flex;flex-direction:column;gap:8px}
+.opt{
+  display:flex;align-items:flex-start;gap:11px;
+  background:var(--card);border:2.5px solid var(--border);
+  border-radius:var(--r);padding:.85rem 1rem;cursor:pointer;
+  transition:all .14s;position:relative;
+}
+.opt:hover{border-color:var(--blue);background:var(--blue-l);transform:translateX(2px)}
+.opt.selected{border-color:var(--blue);background:var(--blue-l);box-shadow:3px 3px 0 var(--blue)}
+.opt.correct{border-color:var(--green);background:var(--green-l);box-shadow:3px 3px 0 var(--green);pointer-events:none}
+.opt.wrong{border-color:var(--red);background:var(--red-l);pointer-events:none;opacity:.65}
+.opt.dimmed{opacity:.45;pointer-events:none}
+.opt-badge{
+  min-width:28px;height:28px;border-radius:8px;border:2px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:13px;font-weight:700;
+  background:var(--bg);flex-shrink:0;transition:all .14s;
+}
+.opt.selected .opt-badge{background:var(--blue);color:#fff;border-color:var(--blue)}
+.opt.correct .opt-badge{background:var(--green);color:#fff;border-color:var(--green)}
+.opt.wrong .opt-badge{background:var(--red);color:#fff;border-color:var(--red)}
+.opt-text{flex:1;font-size:13px;line-height:1.55;color:var(--ink);font-weight:500}
+.opt-text small{display:block;font-weight:400;color:var(--soft);margin-top:2px}
+.opt-cost{
+  font-family:var(--font-display);font-size:13px;font-weight:700;
+  flex-shrink:0;margin-top:2px;
+}
+.opt-cost.neg{color:var(--red)}
+.opt-cost.pos{color:var(--green)}
+.opt-cost.zero{color:var(--soft)}
+
+/* Confirm btn row */
+.confirm-row{display:flex;gap:8px;margin-top:.25rem;flex-wrap:wrap}
+
+/* Result panel (inline) */
+.result-panel{
+  display:none;flex-direction:column;gap:10px;
+  animation:popIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+.result-panel.show{display:flex}
+
+.result-box{
+  border:2.5px solid var(--ink);border-radius:var(--r);
+  padding:1rem 1.1rem;
+}
+.result-box.good{background:var(--green-l);border-color:var(--green)}
+.result-box.bad{background:var(--red-l);border-color:var(--red)}
+.result-box.ok{background:var(--yellow-l);border-color:#fcd34d}
+.result-title{font-family:var(--font-display);font-size:1.1rem;margin-bottom:.35rem}
+.result-title.good{color:var(--green)}
+.result-title.bad{color:var(--red)}
+.result-title.ok{color:var(--yellow)}
+.result-text{font-size:13px;line-height:1.65;color:var(--ink)}
+
+/* ── SIDEBAR ── */
+.sidebar{display:flex;flex-direction:column;gap:12px}
+
+/* AI card */
+.ai-card{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.ai-head{
+  background:var(--purple);padding:.75rem 1rem;
+  display:flex;align-items:center;gap:8px;
+}
+.ai-face{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--purple-l);border:2px solid rgba(255,255,255,.4);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.ai-head-text{color:#fff}
+.ai-head-name{font-family:var(--font-display);font-size:14px;line-height:1}
+.ai-head-status{font-size:11px;opacity:.75}
+.ai-body-wrap{padding:.9rem 1rem;min-height:80px}
+.ai-bubble{
+  font-size:12.5px;color:var(--ink);line-height:1.7;
+  background:var(--purple-l);border:1.5px solid #ddd6fe;
+  border-radius:var(--r);padding:.7rem .85rem;
+  animation:popIn .2s ease;
+}
+.ai-hint-btn{
+  width:100%;text-align:left;font-family:var(--font-body);font-size:12px;
+  font-weight:700;color:var(--purple);
+  background:var(--purple-l);border:1.5px solid #ddd6fe;
+  border-radius:var(--r);padding:.65rem .85rem;cursor:pointer;
+  transition:all .12s;border-top:none;border-radius:0 0 var(--r) var(--r);
+  border-top:1.5px solid #ddd6fe;
+}
+.ai-hint-btn:hover{background:#ede9fe}
+
+/* Score mini */
+.score-mini{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--r);
+  padding:.9rem 1rem;box-shadow:var(--shadow-sm);
+}
+.score-mini-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.65rem}
+.score-num{font-family:var(--font-display);font-size:1.6rem;color:var(--ink)}
+.dec-history{display:flex;flex-direction:column;gap:5px;margin-top:.5rem}
+.dec-row{
+  font-size:11px;color:var(--soft);
+  display:flex;gap:6px;align-items:center;
+  padding:.35rem .55rem;background:var(--bg);border-radius:8px;
+}
+.dec-row .dot{width:7px;height:7px;border-radius:50%}
+.dec-row .dot.g{background:var(--green)}
+.dec-row .dot.r{background:var(--red)}
+.dec-row .dot.y{background:var(--yellow)}
+
+/* Money graph mini */
+.money-graph{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--r);
+  padding:.9rem 1rem;
+}
+.mg-label{font-size:11px;font-weight:700;color:var(--soft);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.04em}
+.mg-bar-wrap{display:flex;flex-direction:column;gap:6px}
+.mg-row{display:flex;align-items:center;gap:7px;font-size:11px}
+.mg-name{color:var(--soft);min-width:52px}
+.mg-track{flex:1;height:7px;background:var(--bg);border-radius:4px;overflow:hidden;border:1.5px solid var(--border)}
+.mg-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.mg-val{font-family:var(--font-display);font-size:12px;color:var(--ink);min-width:36px;text-align:right}
+
+/* ══════════════════
+  SCREEN 2 — RESULT
+══════════════════ */
+#s2{background:var(--bg);align-items:center;justify-content:flex-start;padding:1.25rem}
+.final-wrap{max-width:640px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+.final-hero{
+  background:var(--ink);border-radius:var(--r-lg);
+  padding:2rem 1.75rem;
+  display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.fh-bg{
+  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  font-size:8rem;opacity:.07;user-select:none;pointer-events:none;
+}
+.fh-grade{
+  width:80px;height:80px;border-radius:50%;
+  font-family:var(--font-display);font-size:2.2rem;
+  display:flex;align-items:center;justify-content:center;
+  border:3px solid var(--yellow);color:var(--yellow);
+  flex-shrink:0;
+}
+.fh-info{}
+.fh-title{font-family:var(--font-display);font-size:1.15rem;color:#fff;margin-bottom:.2rem}
+.fh-score{font-family:var(--font-display);font-size:2.2rem;color:var(--yellow);line-height:1}
+.fh-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:.3rem}
+.fh-stars{font-size:22px;letter-spacing:3px;margin:.3rem 0}
+
+/* Learning cards */
+.learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.learn-card{
+  background:var(--card);border:2px solid var(--border);border-radius:var(--r);
+  padding:.9rem 1rem;
+}
+.lc-icon{font-size:22px;margin-bottom:.4rem}
+.lc-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:.3rem}
+.lc-text{font-size:12px;color:var(--soft);line-height:1.55}
+
+/* How to play recap */
+.howto-card{
+  background:var(--card);border:2.5px solid var(--border);border-radius:var(--r-lg);
+  padding:1.1rem 1.25rem;
+}
+.howto-title{font-family:var(--font-display);font-size:1rem;color:var(--ink);margin-bottom:.85rem}
+.howto-steps{display:flex;flex-direction:column;gap:8px}
+.hs-row{display:flex;align-items:flex-start;gap:10px}
+.hs-num{
+  width:24px;height:24px;border-radius:8px;border:2px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:12px;font-weight:700;
+  flex-shrink:0;margin-top:1px;
+}
+.hs-text{font-size:13px;color:var(--ink);line-height:1.55}
+.hs-text small{display:block;color:var(--soft);font-size:12px}
+
+/* Decision log */
+.dec-log-card{
+  background:var(--card);border:2px solid var(--border);border-radius:var(--r-lg);overflow:hidden;
+}
+.dlc-head{padding:.75rem 1.1rem;background:var(--bg);border-bottom:2px solid var(--border);font-size:13px;font-weight:700;color:var(--ink)}
+.dlc-body{padding:.85rem 1.1rem;display:flex;flex-direction:column;gap:.6rem}
+.dl-row{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:.6rem .75rem;border-radius:var(--r);background:var(--bg);
+}
+.dl-icon{font-size:18px;flex-shrink:0}
+.dl-right{flex:1}
+.dl-q{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.dl-choice{font-size:12px;color:var(--soft)}
+.dl-chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+
+/* AI final */
+.ai-final{
+  background:var(--purple);border-radius:var(--r-lg);padding:1.4rem 1.5rem;
+  box-shadow:4px 4px 0 var(--ink);border:2.5px solid var(--ink);
+}
+.af-label{font-size:11px;color:rgba(255,255,255,.6);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.4rem}
+.af-name{font-family:var(--font-display);font-size:14px;color:#fff;margin-bottom:.75rem;opacity:.85}
+.af-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.75}
+.af-tips{display:flex;flex-direction:column;gap:8px;margin-top:1rem}
+.af-tip{
+  display:flex;gap:9px;align-items:flex-start;
+  padding:.65rem .8rem;border-radius:var(--r);background:rgba(255,255,255,.12);
+}
+.af-tip-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.af-tip-text{font-size:12px;color:rgba(255,255,255,.8);line-height:1.6}
+
+.final-btns{display:flex;gap:10px;flex-wrap:wrap}
+.final-btns .btn{flex:1;min-width:140px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .game-body{grid-template-columns:1fr}
+  .sidebar{order:-1}
+  .learn-grid{grid-template-columns:1fr}
+  .howto-card{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════
+  SCREEN 0 — INTRO
+══════════════════ -->
+<div id="s0" class="screen on">
+  <div class="logo-wrap">💰</div>
+  <div class="game-title">BUDGET<br><span>BOSS</span></div>
+  <div class="intro-desc">เงินเดือน 15,000 บาท · 10 สถานการณ์จริงในชีวิต<br>เลือก → ดูผล → เรียนรู้การใช้เงินจริง</div>
+
+  <div class="intro-steps">
+    <div class="step-row">
+      <div class="step-num" style="background:#eff6ff;color:var(--blue);border-color:var(--blue)">1</div>
+      <div class="step-text">อ่านสถานการณ์ที่เกิดขึ้น (5 วินาที)</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:#f0fdf4;color:var(--green);border-color:var(--green)">2</div>
+      <div class="step-text">กดเลือกวิธีจัดการเงิน (A / B / C)</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:#fff7ed;color:var(--orange);border-color:var(--orange)">3</div>
+      <div class="step-text">ดูผลทันที — เงินเหลือเท่าไหร่?</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:#f5f3ff;color:var(--purple);border-color:var(--purple)">4</div>
+      <div class="step-text">AI อธิบายว่าทำไมถึงดีหรือไม่ดี</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:#fdf2f8;color:var(--pink);border-color:var(--pink)">5</div>
+      <div class="step-text">ครบ 4 รอบ รับคะแนนพร้อมสรุปผล</div>
+    </div>
+  </div>
+
+  <div class="intro-chips">
+    <span class="chip chip-green">ไม่ต้องมีพื้นฐาน</span>
+    <span class="chip chip-blue">เล่นคนเดียวได้</span>
+    <span class="chip chip-yellow">20–25 นาที</span>
+    <span class="chip chip-purple">AI อธิบายทุกขั้น</span>
+  </div>
+
+  <button class="btn btn-fill" style="font-size:16px;padding:14px 40px;border-radius:var(--r-lg)" onclick="startGame()">
+    เริ่มเลย! 🚀
+  </button>
+</div>
+
+<!-- ══════════════════
+  TOPBAR
+══════════════════ -->
+<div class="topbar" id="topbar" style="display:none">
+  <div class="tb-logo">Budget <span>Boss</span></div>
+  <div class="tb-right">
+    <div class="money-bar">
+      <div class="money-icon">💵</div>
+      <div class="money-amount" id="tb-money">15,000</div>
+      <div style="font-size:12px;color:var(--green);font-weight:600">บาท</div>
+    </div>
+    <div class="chip chip-soft" id="tb-round">สถานการณ์ 1/4</div>
+  </div>
+</div>
+
+<!-- ══════════════════
+  SCREEN 1 — GAME
+══════════════════ -->
+<div id="s1" class="screen">
+<div class="game-body">
+
+  <!-- Progress -->
+  <div class="progress-row" id="progress-row"></div>
+
+  <!-- Main card -->
+  <div class="sit-card">
+    <div class="sit-header">
+      <div class="sit-emoji-row">
+        <div class="sit-emoji" id="sit-emoji"></div>
+        <div class="sit-meta">
+          <div class="sit-tag-row" id="sit-tags"></div>
+          <div class="sit-title" id="sit-title"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sit-body">
+      <div class="sit-desc" id="sit-desc"></div>
+      <div class="sit-scenario" id="sit-scenario"></div>
+      <div class="sit-q" id="sit-q"></div>
+      <div class="options-wrap" id="options-wrap"></div>
+      <div class="confirm-row">
+        <button class="btn btn-fill" id="btn-confirm" disabled onclick="confirmChoice()" style="flex:1">
+          ยืนยันการเลือก ✓
+        </button>
+        <button class="btn btn-sm" onclick="showIntro()" style="padding:12px 16px">ออก</button>
+      </div>
+      <div class="result-panel" id="result-panel"></div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <!-- AI -->
+    <div class="ai-card">
+      <div class="ai-head">
+        <div class="ai-face">🤖</div>
+        <div class="ai-head-text">
+          <div class="ai-head-name">FINN — ที่ปรึกษาการเงิน AI</div>
+          <div class="ai-head-status" id="ai-status">พร้อมช่วยเหลือ ✦</div>
+        </div>
+      </div>
+      <div class="ai-body-wrap">
+        <div class="ai-bubble" id="ai-msg">สวัสดี! อ่านสถานการณ์แล้วเลือกคำตอบที่คิดว่าดีที่สุดได้เลย ไม่ต้องกลัวผิด — ทุกคำตอบมีเหตุผล</div>
+      </div>
+      <button class="ai-hint-btn" onclick="getHint()" id="hint-btn">
+        💡 ขอคำใบ้จาก FINN (−10 pts)
+      </button>
+    </div>
+
+    <!-- Score -->
+    <div class="score-mini">
+      <div class="score-mini-top">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">คะแนนสะสม</div>
+          <div class="score-num" id="side-score">0</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">รอบที่</div>
+          <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--ink)" id="side-round">1/4</div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">ประวัติ</div>
+      <div class="dec-history" id="dec-history">
+        <div style="font-size:12px;color:var(--soft);padding:.35rem .55rem">ยังไม่มีการตัดสินใจ</div>
+      </div>
+    </div>
+
+    <!-- Money bars -->
+    <div class="money-graph">
+      <div class="mg-label">เงินคงเหลือ</div>
+      <div class="mg-bar-wrap">
+        <div class="mg-row">
+          <div class="mg-name">เริ่มต้น</div>
+          <div class="mg-track"><div class="mg-fill" style="width:100%;background:#d1d5db"></div></div>
+          <div class="mg-val">15,000</div>
+        </div>
+        <div class="mg-row">
+          <div class="mg-name">ปัจจุบัน</div>
+          <div class="mg-track"><div class="mg-fill" id="money-bar-fill" style="width:100%;background:var(--green)"></div></div>
+          <div class="mg-val" id="money-bar-val">15,000</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════
+  SCREEN 2 — FINAL
+══════════════════ -->
+<div id="s2" class="screen">
+<div class="final-wrap">
+
+  <div class="final-hero">
+    <div class="fh-bg" id="fh-bg">💰</div>
+    <div class="fh-grade" id="fh-grade">A</div>
+    <div class="fh-info">
+      <div class="fh-title">ผลการบริหารเงินเดือน</div>
+      <div class="fh-score" id="fh-score">0 pts</div>
+      <div class="fh-stars" id="fh-stars">★★★</div>
+      <div class="fh-sub" id="fh-sub"></div>
+    </div>
+  </div>
+
+  <!-- What you learned -->
+  <div>
+    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px">สิ่งที่ได้เรียนรู้จากการเล่น</div>
+    <div class="learn-grid">
+      <div class="learn-card">
+        <div class="lc-icon">🎯</div>
+        <div class="lc-title">ทักษะการตัดสินใจ</div>
+        <div class="lc-text">เลือกภายใต้ข้อจำกัดด้านเงิน โดยคำนึงถึงผลระยะสั้นและยาว</div>
+      </div>
+      <div class="learn-card">
+        <div class="lc-icon">⚖️</div>
+        <div class="lc-title">Trade-off ของเงิน</div>
+        <div class="lc-text">ใช้เงินที่ไหนก็หมดที่นั่น ต้องเลือกว่าอะไร "สำคัญกว่า"</div>
+      </div>
+      <div class="learn-card">
+        <div class="lc-icon">💡</div>
+        <div class="lc-title">กองทุนฉุกเฉิน</div>
+        <div class="lc-text">เงินสำรองช่วยได้มากเมื่อเกิดเหตุไม่คาดฝัน ควรมีอย่างน้อย 3 เดือน</div>
+      </div>
+      <div class="learn-card">
+        <div class="lc-icon">📈</div>
+        <div class="lc-title">เงินต่อเงิน</div>
+        <div class="lc-text">ออมและลงทุนเล็กน้อยแต่สม่ำเสมอสำคัญกว่าการออมครั้งเดียวก้อนใหญ่</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How to play recap -->
+  <div class="howto-card">
+    <div class="howto-title">วิธีเล่น — สรุปใน 5 ขั้น</div>
+    <div class="howto-steps">
+      <div class="hs-row"><div class="hs-num" style="background:#eff6ff;color:var(--blue);border-color:var(--blue)">1</div><div class="hs-text">อ่านสถานการณ์ที่เกิดขึ้น<small>รู้ว่าเงินหายไปไหน หรือต้องตัดสินใจอะไร</small></div></div>
+      <div class="hs-row"><div class="hs-num" style="background:#f0fdf4;color:var(--green);border-color:var(--green)">2</div><div class="hs-text">กดเลือก A / B / C<small>เลือกวิธีจัดการเงินที่คิดว่าดีที่สุด</small></div></div>
+      <div class="hs-row"><div class="hs-num" style="background:#fff7ed;color:var(--orange);border-color:var(--orange)">3</div><div class="hs-text">ดูผลทันที<small>เงินเปลี่ยนไปเท่าไหร่ และดีหรือไม่ดีแค่ไหน</small></div></div>
+      <div class="hs-row"><div class="hs-num" style="background:#f5f3ff;color:var(--purple);border-color:var(--purple)">4</div><div class="hs-text">อ่าน AI อธิบาย<small>FINN บอกเหตุผลและสิ่งที่ควรจำ</small></div></div>
+      <div class="hs-row"><div class="hs-num" style="background:#fdf2f8;color:var(--pink);border-color:var(--pink)">5</div><div class="hs-text">ทำซ้ำ 4 รอบ → รับคะแนน<small>ยิ่งตัดสินใจดี ยิ่งได้คะแนนสูง</small></div></div>
+    </div>
+  </div>
+
+  <!-- Decision log -->
+  <div class="dec-log-card">
+    <div class="dlc-head">บันทึกการตัดสินใจทั้ง 4 รอบ</div>
+    <div class="dlc-body" id="final-log"></div>
+  </div>
+
+  <!-- AI summary -->
+  <div class="ai-final">
+    <div class="af-label">สรุปจาก AI</div>
+    <div class="af-name">FINN — ที่ปรึกษาการเงิน AI</div>
+    <div class="af-text" id="af-text"></div>
+    <div class="af-tips" id="af-tips"></div>
+  </div>
+
+  <div class="final-btns">
+    <button class="btn" onclick="startGame()">เล่นอีกครั้ง ↩</button>
+    <button class="btn btn-fill" onclick="showIntro()">กลับหน้าหลัก 🏠</button>
+  </div>
+</div>
+</div>
+
+<script>
+/* ═══════ DATA ═══════ */
+const ROUNDS = [
+  {
+    emoji:'🏠', bg:'#eff6ff',
+    tags:[{t:'ค่าใช้จ่ายประจำ',c:'chip-blue'},{t:'สถานการณ์ที่ 1',c:'chip-soft'}],
+    title:'ค่าเช่าห้องพักพุ่ง!',
+    desc:'คุณเพิ่งเริ่มทำงาน ได้รับเงินเดือน 15,000 บาท เดือนแรก ค่าเช่าห้องเดิมหมดสัญญา เจ้าของปรับราคาขึ้น',
+    scenario:'⚡ ค่าเช่าห้องเก่า 3,500 บาท/เดือน → เจ้าของขอปรับเป็น 5,000 บาท/เดือน เงินเดือนคุณมี 15,000 บาท',
+    q:'ค่าเช่าปรับราคาขึ้น คุณจะตัดสินใจอย่างไร?',
+    opts:[
+      {k:'A', t:'ยอมจ่าย 5,000 บาท เพราะไม่อยากวุ่นวายกับการย้ายห้อง', sub:'ไม่ต้องย้าย ไม่เหนื่อย', cost:-5000, label:'−5,000', cls:'neg', quality:1},
+      {k:'B', t:'หาห้องใหม่ที่ 3,000 บาท ย้ายออกเลย', sub:'ประหยัดกว่า แต่เสียเวลาและค่าใช้จ่ายย้าย −500', cost:-3500, label:'−3,500', cls:'neg', quality:3},
+      {k:'C', t:'ต่อรองเจ้าของ ขอจ่าย 4,000 บาท', sub:'ลองเจรจาก่อน อาจประหยัดได้โดยไม่ต้องย้าย', cost:-4000, label:'−4,000', cls:'neg', quality:2},
+    ],
+    bestOpt:1,
+    hint:'ค่าเช่าคือค่าใช้จ่ายคงที่ที่เกิดทุกเดือน ยิ่งจ่ายน้อย เงินเหลือสะสมได้มากกว่าในระยะยาว',
+    aiReady:'คิดดูว่าค่าเช่าเป็นค่าใช้จ่ายที่เกิดซ้ำทุกเดือน การประหยัดเพียง 1,000 บาท/เดือน = 12,000 บาท/ปี!',
+    resultGood:'ยอดเยี่ยม! หาห้องใหม่ที่ถูกกว่า ประหยัดได้ 1,500–2,000 บาท/เดือน ตลอด 1 ปี เท่ากับออมได้เพิ่ม 18,000–24,000 บาท โดยไม่ต้องทำอะไรพิเศษ 🎯',
+    resultOk:'การต่อรองเป็นทักษะที่ดี! ประหยัดได้ 1,000 บาท/เดือน แต่ถ้าหาห้องใหม่ได้ราคา 3,000 บาท จะประหยัดได้มากกว่านี้อีก',
+    resultBad:'จ่ายเต็มราคาโดยไม่ต่อรองหรือหาทางเลือก ค่าเช่าที่แพงขึ้นจะกัดเงินทุกเดือน ควรเปรียบเทียบตัวเลือกก่อนตัดสินใจเสมอ',
+    aiLearn:'บทเรียน: ค่าใช้จ่ายคงที่ (Fixed Cost) อย่างค่าเช่า ถ้าลดได้แม้แต่เล็กน้อย จะประหยัดได้มากในระยะยาว',
+  },
+  {
+    emoji:'📱', bg:'#fff7ed',
+    tags:[{t:'การใช้จ่ายฟุ่มเฟือย',c:'chip-yellow'},{t:'สถานการณ์ที่ 2',c:'chip-soft'}],
+    title:'เพื่อนชวนซื้อมือถือใหม่!',
+    desc:'มือถือเครื่องเก่าของคุณยังใช้งานได้ดี แต่เพื่อนบอกว่ารุ่นใหม่ดีกว่ามาก และมีโปรผ่อน 0%',
+    scenario:'💬 มือถือใหม่ราคา 18,000 บาท ผ่อน 0% 12 เดือน = 1,500 บาท/เดือน เงินปัจจุบันหลังหักค่าเช่า ≈ 11,500 บาท',
+    q:'มือถือเก่ายังใช้ได้ดี คุณจะเลือกแบบไหน?',
+    opts:[
+      {k:'A', t:'เก็บเงินสด 6 เดือน แล้วค่อยซื้อใหม่เต็มราคา', sub:'รอหน่อยแต่ไม่มีหนี้ และอาจได้รุ่นใหม่กว่า', cost:0, label:'±0 (ออมก่อน)', cls:'zero', quality:3},
+      {k:'B', t:'ผ่อนซื้อใหม่เลย 1,500 บาท/เดือน 12 เดือน', sub:'ได้เครื่องใหม่ล่าสุด แต่มีภาระหนี้ยาว 1 ปี', cost:-1500, label:'−1,500/เดือน', cls:'neg', quality:1},
+      {k:'C', t:'สลับไปใช้มือถือมือสองราคา 4,500 บาทก่อน', sub:'ประหยัดกว่ามาก ไม่มีหนี้ผ่อน แต่ไม่ใช่รุ่นใหม่', cost:-4500, label:'−4,500', cls:'neg', quality:2},
+    ],
+    bestOpt:0,
+    hint:'ถามตัวเองว่า "ของเก่ายังใช้งานได้ไหม?" ถ้าใช้ได้ การซื้อใหม่คือ "ความอยาก" ไม่ใช่ "ความจำเป็น"',
+    aiReady:'ของเก่ายังใช้ได้ดี ถามตัวเองว่าซื้อเพราะ "อยากได้" หรือ "จำเป็นต้องการ" ทั้งสองไม่ใช่เรื่องผิด แต่ผลลัพธ์ต่างกัน',
+    resultGood:'ฉลาดมาก! ไม่มีหนี้ผ่อน + ออมเงินได้ 1,500 บาทต่อเดือน ใน 12 เดือน เท่ากับมีเงินสะสมเพิ่ม 18,000 บาท แทนที่จะจ่ายค่ามือถือ 🏆',
+    resultOk:'ทางเลือกกลาง! ได้ของดีขึ้นโดยไม่มีหนี้รายเดือน แต่เสียเงินก้อนไป 5,000 บาท ถ้าของเดิมยังใช้ได้ การรอออมก็ดีกว่า',
+    resultBad:'ผ่อน 0% ฟังดูดี แต่มันคือภาระที่ผูกพัน 12 เดือน ถ้าเกิดเหตุฉุกเฉิน ยอดผ่อนรายเดือนจะกลายเป็นปัญหาใหญ่',
+    aiLearn:'บทเรียน: แยกให้ออกระหว่าง "อยากได้" (Want) กับ "ต้องการ" (Need) ของอยากได้ควรซื้อก็ต่อเมื่อมีเงินเหลือพอ',
+  },
+  {
+    emoji:'🚑', bg:'#fef2f2',
+    tags:[{t:'เหตุฉุกเฉิน',c:'chip-red'},{t:'สถานการณ์ที่ 3',c:'chip-soft'}],
+    title:'ป่วยกะทันหัน ต้องพบแพทย์!',
+    desc:'ไม่สบายหนัก ต้องพบแพทย์ด่วน ค่ารักษาไม่แน่ใจว่าจะอยู่ในสิทธิ์หรือเปล่า',
+    scenario:'🏥 ค่ารักษา (ประเมินเบื้องต้น) 2,500 บาท เงินในกระเป๋าตอนนี้เหลือตามการตัดสินใจก่อนหน้า',
+    q:'ป่วยแล้ว ต้องจ่ายค่ารักษา คุณจะหาเงินจากไหน?',
+    opts:[
+      {k:'A', t:'รูดบัตรเครดิตก่อน แล้วค่อยหาเงินคืนทีหลัง', sub:'สะดวกที่สุด แต่เสี่ยงดอกเบี้ยถ้าจ่ายไม่ครบบิล', cost:-2500, label:'−2,500+ดอกเบี้ย', cls:'neg', quality:1},
+      {k:'B', t:'โทรขอยืมเงินพ่อแม่ก่อน แล้วค่อยคืน', sub:'ได้เงินแน่นอน แต่รู้สึกอึดอัด และเป็นภาระครอบครัว', cost:-2500, label:'−2,500 (ยืม)', cls:'neg', quality:2},
+      {k:'C', t:'เปิดแอปเช็คสิทธิ์บัตรทอง/ประกันสังคมก่อนเลย', sub:'ใช้เวลา 2 นาที อาจจ่ายแค่ 30 บาท หรือฟรีเลย', cost:-30, label:'−30 บาท', cls:'neg', quality:3},
+    ],
+    bestOpt:2,
+    hint:'คนไทยมีสิทธิ์ บัตรทอง (ฟรี) หรือ ประกันสังคม (30 บาท) หรือประกันสุขภาพ ควรตรวจสอบสิทธิ์ก่อนเสมอ',
+    aiReady:'นี่คือสถานการณ์ฉุกเฉิน! คนไทยทุกคนมีสิทธิ์การรักษาพยาบาลพื้นฐาน ลองนึกดูว่าคุณมีสิทธิ์อะไรบ้าง',
+    resultGood:'ฉลาดมาก! สิทธิ์บัตรทองหรือประกันสังคมช่วยประหยัดได้มากกว่า 2,000 บาท ทันที นี่คือเหตุผลที่ต้องรู้จักสิทธิ์ของตัวเอง 🌟',
+    resultOk:'ยืมเพื่อนเป็นทางออกชั่วคราว แต่ควรตรวจสอบสิทธิ์ก่อน บัตรทอง/ประกันสังคมอาจช่วยให้ไม่ต้องยืมเลย',
+    resultBad:'บัตรเครดิตสะดวก แต่ถ้าจ่ายไม่ครบในรอบบิล ดอกเบี้ย 18-25% ต่อปีจะทำให้ค่ารักษา 2,500 บาท แพงขึ้นเรื่อยๆ',
+    aiLearn:'บทเรียน: รู้จักสิทธิ์สวัสดิการของตัวเอง บัตรทอง ประกันสังคม หรือประกันสุขภาพ ช่วยลดภาระค่าใช้จ่ายฉุกเฉินได้มาก',
+  },
+  {
+    emoji:'💎', bg:'#f0fdf4',
+    tags:[{t:'การออมและลงทุน',c:'chip-green'},{t:'สถานการณ์ที่ 4',c:'chip-soft'}],
+    title:'เหลือเงิน 3,000 บาท ปลายเดือน!',
+    desc:'ผ่านมาได้ดี เงินเดือนจ่ายทุกค่าใช้จ่ายหลักแล้ว ยังเหลือเงิน 3,000 บาท คุณจะทำอะไรกับมัน?',
+    scenario:'✅ จ่ายค่าเช่า ค่ากิน ค่าเดินทางครบแล้ว เหลือ 3,000 บาท ถือเป็น "เงินส่วนเกิน" ของเดือนนี้',
+    q:'มีเงินเหลือ 3,000 บาท คุณจะทำอะไรกับมัน?',
+    opts:[
+      {k:'A', t:'ช้อปปิ้งออนไลน์เลย เพราะทำงานมาเหนื่อย', sub:'ได้ของที่อยากได้ แต่เงินหมดภายในวัน', cost:-3000, label:'−3,000', cls:'neg', quality:1},
+      {k:'B', t:'ตั้งโอนอัตโนมัติเข้าบัญชีออม ทุกวันที่ 25 ของเดือน', sub:'ออมก่อนที่จะมีโอกาสใช้ เป็นวิธีที่ได้ผลที่สุด', cost:0, label:'ออม 3,000', cls:'pos', quality:3},
+      {k:'C', t:'ออม 2,000 บาท และสำรองไว้ใช้ยามฉุกเฉิน 1,000 บาท', sub:'แบ่งสัดส่วนอย่างมีแผน ดีกว่าไม่มีออมเลย', cost:-1000, label:'ออม 2,000', cls:'pos', quality:2},
+    ],
+    bestOpt:1,
+    hint:'กฎ 50/30/20: 50% ค่าใช้จ่ายจำเป็น, 30% ค่าใช้จ่ายส่วนตัว, 20% ออม เป็นสูตรง่ายที่นักการเงินแนะนำ',
+    aiReady:'ยินดีด้วย! มีเงินเหลือแสดงว่าบริหารได้ดีมาก ตอนนี้คำถามคือ จะใช้เงินส่วนเกินให้ "งอกเงย" หรือแค่ใช้จ่ายไป?',
+    resultGood:'ออม 100% เยี่ยมมาก! ทำแบบนี้ทุกเดือน ใน 1 ปี คุณจะมีเงินสำรอง 36,000 บาท ซึ่งคือ 2.4 เดือนของรายได้ 🏆',
+    resultOk:'สมดุลดีมาก! ออมครึ่งหนึ่ง ใช้ครึ่งหนึ่ง นี่คือสไตล์ที่ยั่งยืนในระยะยาว ทำได้ดีกว่าคนส่วนใหญ่แล้ว',
+    resultBad:'การให้รางวัลตัวเองบ้างเป็นเรื่องดี แต่ถ้าทำทุกเดือนโดยไม่ออมเลย เงินสำรองจะเป็น 0 เมื่อเกิดเหตุฉุกเฉิน',
+    aiLearn:'บทเรียน: "ออมก่อนใช้" (Pay Yourself First) เงิน 500 บาท/เดือน ออมตั้งแต่อายุ 22 จะกลายเป็น 300,000+ บาท เมื่ออายุ 45 (ดอกเบี้ยทบต้น)',
+  },
+  {
+    emoji:'🍜', bg:'#fff7ed',
+    tags:[{t:'ค่าอาหารประจำวัน',c:'chip-yellow'},{t:'สถานการณ์ที่ 5',c:'chip-soft'}],
+    title:'ค่าอาหารแพงขึ้นทุกวัน!',
+    desc:'ราคาอาหารในละแวกออฟฟิศพุ่งสูงขึ้นหลังน้ำมันแพง มื้อหนึ่งเฉลี่ย 120 บาท ต่อวันคือ 240 บาท ต่อเดือนคือ 5,000+ บาท',
+    scenario:'🍱 ค่าอาหาร 3 มื้อ × 30 วัน ≈ 5,400 บาท/เดือน คิดเป็น 36% ของเงินเดือน ซึ่งสูงกว่าค่าเช่าเสียอีก',
+    q:'ค่าอาหารกินงบหมด คุณจะปรับยังไง?',
+    opts:[
+      {k:'A', t:'ยังกินร้านเหมือนเดิม แต่จะทำงานล่วงเวลาหาเงินเพิ่ม', sub:'รายได้เพิ่มขึ้น แต่ไม่ได้แก้ปัญหาการใช้จ่าย', cost:-5400, label:'−5,400', cls:'neg', quality:1},
+      {k:'B', t:'เลิกกินมื้อเช้า กินแค่กลางวัน+เย็น', sub:'ประหยัดเงินได้บ้าง แต่กระทบสุขภาพระยะยาว', cost:-3600, label:'−3,600', cls:'neg', quality:2},
+      {k:'C', t:'เตรียมข้าวกล่องมาเองทุกวัน ลดค่าอาหารครึ่งหนึ่ง', sub:'ใช้เงิน ≈ 2,800 บาท/เดือน ประหยัดได้ 2,600 บาท', cost:-2800, label:'−2,800', cls:'neg', quality:3},
+    ],
+    bestOpt:2,
+    hint:'ค่าอาหารเป็นค่าใช้จ่ายที่ปรับได้มากที่สุด ลองคำนวณดูว่าทำกินเองต่างกับซื้อกินแค่ไหนต่อเดือน',
+    aiReady:'ค่าอาหารคือหนึ่งในค่าใช้จ่ายที่ควบคุมได้มากที่สุด ลองคิดว่าถ้าประหยัดได้ 1,000 บาท/เดือน ปีหนึ่งเท่ากับ 12,000 บาท',
+    resultGood:'ยอดเยี่ยม! ทำกับข้าวเองช่วยลดค่าอาหารได้เกือบครึ่ง นอกจากประหยัดเงิน ยังรู้ว่ากินอะไรเข้าไป ดีต่อสุขภาพด้วย 🥗',
+    resultOk:'ฉลาดที่หาร้านถูกกว่า ประหยัดได้ 1,600 บาท/เดือน ถ้าอยากประหยัดได้มากกว่านี้ ลองทำกินเองบ้างในวันหยุด',
+    resultBad:'กินร้านทุกมื้อสะดวกจริง แต่ค่าอาหาร 5,400 บาท/เดือน คือ 36% ของเงินเดือน สูงเกินไปมากสำหรับคนเริ่มทำงาน',
+    aiLearn:'บทเรียน: ค่าอาหารเป็น "ค่าใช้จ่ายแปรผัน" ที่ปรับได้ ต่างจากค่าเช่าที่คงที่ การลดค่าอาหารสัก 30% คือวิธีประหยัดที่ง่ายที่สุด',
+  },
+  {
+    emoji:'🎮', bg:'#f5f3ff',
+    tags:[{t:'ความบันเทิงและ Subscription',c:'chip-purple'},{t:'สถานการณ์ที่ 6',c:'chip-soft'}],
+    title:'ค่า Subscription รายเดือนเพิ่มขึ้นเรื่อยๆ!',
+    desc:'คุณสมัคร Netflix, Spotify, YouTube Premium, iCloud และแอปฟิตเนสออนไลน์ไว้ทั้งหมด แต่ใช้ไม่ครบทุกแอป',
+    scenario:'📋 รายการ Subscription: Netflix 299 + Spotify 99 + YouTube Premium 189 + iCloud 59 + Fitness App 299 = 945 บาท/เดือน',
+    q:'จ่าย Subscription ไปเกือบ 1,000 บาท/เดือน คุณจะทำอะไร?',
+    opts:[
+      {k:'A', t:'เช็คประวัติการใช้งาน ยกเลิกทุกตัวที่เปิดน้อยกว่า 2 ครั้ง/สัปดาห์', sub:'เหลือแค่ที่ใช้จริง ประหยัดได้ ≈ 600 บาท/เดือน', cost:-350, label:'−350', cls:'neg', quality:3},
+      {k:'B', t:'จ่ายต่อทุกตัวเพราะกลัวพลาดอะไรสักอย่าง', sub:'จ่ายครบ 945 บาท/เดือน = 11,340 บาท/ปี ที่อาจไม่ได้ใช้', cost:-945, label:'−945', cls:'neg', quality:1},
+      {k:'C', t:'ยกเลิกทุกตัวก่อน แล้วค่อยสมัครใหม่ทีละอย่าง', sub:'ประหยัดสูงสุดในระยะสั้น แต่อาจขาด content ที่ต้องการจริงๆ', cost:0, label:'±0 (พักก่อน)', cls:'zero', quality:2},
+    ],
+    bestOpt:0,
+    hint:'ลองนับดูว่าคุณใช้แต่ละแอปสัปดาห์ละกี่ครั้ง ถ้าใช้น้อยกว่า 2 ครั้ง/สัปดาห์ อาจไม่คุ้มที่จะจ่าย',
+    aiReady:'Subscription เป็นกับดักที่น่ากลัว เพราะจ่ายทีละน้อยแต่รวมกันเยอะมาก ลองรวมตัวเลขดูก่อนว่าใช้จ่ายไปเท่าไหร่',
+    resultGood:'ฉลาดมาก! ตัดที่ไม่ใช้ออก ประหยัดได้ 600+ บาท/เดือน = 7,200 บาท/ปี แค่ยกเลิกแอปที่ไม่ได้ใช้ ไม่ต้องออกแรงเพิ่มเลย 💡',
+    resultOk:'แชร์กับเพื่อนเป็นไอเดียดี ประหยัดได้ครึ่งหนึ่ง แต่ลองตรวจสอบว่าใช้ทุกตัวจริงไหม อาจยกเลิกได้อีก',
+    resultBad:'จ่าย 945 บาท/เดือนโดยไม่ตรวจสอบว่าใช้จริงไหม เงินกว่า 11,000 บาท/ปีหายไปกับแอปที่อาจไม่ได้เปิดเลย',
+    aiLearn:'บทเรียน: ทำ "Subscription Audit" ทุก 3 เดือน รายการที่ไม่ได้ใช้เกิน 2 สัปดาห์ให้ยกเลิกทันที เงินเล็กๆ น้อยๆ รวมกันเป็นเงินก้อนใหญ่ได้',
+  },
+  {
+    emoji:'🚗', bg:'#f0fdf4',
+    tags:[{t:'การเดินทาง',c:'chip-green'},{t:'สถานการณ์ที่ 7',c:'chip-soft'}],
+    title:'เดินทางไปทำงานยังไงดี?',
+    desc:'บ้านอยู่ห่างจากที่ทำงาน 15 กม. คุณกำลังคิดว่าจะใช้การเดินทางแบบไหนให้คุ้มค่าที่สุด',
+    scenario:'🗺️ ตัวเลือกการเดินทาง: รถยนต์ส่วนตัว (มีรถแล้ว) / มอเตอร์ไซค์รับจ้าง / รถไฟฟ้า + เดิน ค่าใช้จ่ายต่างกันมาก',
+    q:'ต้องเดินทาง 15 กม. ทุกวัน คุณจะเลือกแบบไหน?',
+    opts:[
+      {k:'A', t:'ขับรถยนต์ส่วนตัวไปกลับทุกวัน', sub:'สบายสุด แต่ต้นทุนจริง: น้ำมัน+จอด+เสื่อมราคา ≈ 5,500/เดือน', cost:-5500, label:'−5,500', cls:'neg', quality:1},
+      {k:'B', t:'นั่งมอเตอร์ไซค์รับจ้าง + รถสองแถวสลับกัน', sub:'ยืดหยุ่น ≈ 2,500 บาท/เดือน เหมาะถ้าเส้นทางไม่มีรถไฟฟ้า', cost:-2500, label:'−2,500', cls:'neg', quality:2},
+      {k:'C', t:'ใช้รถไฟฟ้า + เดินหรือจักรยานช่วงสุดท้าย', sub:'บัตรเหมาจ่าย MRT/BTS ≈ 1,200 บาท/เดือน ไม่ต้องหาที่จอด', cost:-1200, label:'−1,200', cls:'neg', quality:3},
+    ],
+    bestOpt:2,
+    hint:'คำนวณค่าใช้จ่ายจริงของรถยนต์ให้ครบ: น้ำมัน + ค่าจอด + ค่าทางด่วน + ค่าเสื่อมสภาพ + ประกัน อาจแพงกว่าที่คิดมาก',
+    aiReady:'ค่าเดินทางเป็นค่าใช้จ่ายที่หลายคนมองข้าม ลองคำนวณต้นทุนรวมจริงๆ ของแต่ละทางเลือกก่อนตัดสินใจ',
+    resultGood:'ยอดเยี่ยม! รถไฟฟ้าประหยัดกว่ารถยนต์ถึง 4,300 บาท/เดือน = 51,600 บาท/ปี แถมไม่ต้องเครียดกับรถติด มีเวลาอ่านหนังสือบนรถอีกด้วย 🚇',
+    resultOk:'มอเตอร์ไซค์รับจ้างประหยัดกว่ารถยนต์ดี แต่ถ้าเส้นทางเชื่อมระบบรถไฟฟ้าได้ จะประหยัดได้อีกเยอะมาก',
+    resultBad:'รถยนต์สะดวกจริง แต่ต้นทุนรวม 5,500 บาท/เดือน คือ 36% ของเงินเดือน สูงเกินไปสำหรับคนเริ่มทำงาน ลองคำนวณทางเลือกอื่นด้วย',
+    aiLearn:'บทเรียน: ต้นทุนรถยนต์มีซ่อนอยู่มากกว่าที่เห็น (Hidden Cost) ได้แก่ ค่าเสื่อมสภาพ ค่าประกัน ค่าซ่อม รวมกันแล้วแพงกว่าระบบขนส่งสาธารณะมาก',
+  },
+  {
+    emoji:'💳', bg:'#fef2f2',
+    tags:[{t:'หนี้บัตรเครดิต',c:'chip-red'},{t:'สถานการณ์ที่ 8',c:'chip-soft'}],
+    title:'บิลบัตรเครดิตมาแล้ว!',
+    desc:'เดือนที่แล้วใช้บัตรเครดิตซื้อของไปรวม 8,000 บาท ตอนนี้บิลมาแล้ว แต่เงินในมือเดือนนี้ค่อนข้างตึง',
+    scenario:'💳 ยอดบัตรเครดิต 8,000 บาท | ขั้นต่ำ 5% = 400 บาท | จ่ายเต็ม = 8,000 บาท | ดอกเบี้ย 18% ต่อปี = 1,440 บาท/ปีถ้าไม่จ่ายครบ',
+    q:'บิลบัตรเครดิต 8,000 บาท มาแล้ว คุณจะจ่ายแค่ไหน?',
+    opts:[
+      {k:'A', t:'จ่ายแค่ขั้นต่ำ 400 บาทก่อน รอเดือนหน้าค่อยจ่ายเพิ่ม', sub:'เหลือเงินใช้เยอะ แต่หนี้ค้างดอกเบี้ย 18%/ปีทบทุกเดือน', cost:-400, label:'−400 (มีดอก)', cls:'neg', quality:1},
+      {k:'B', t:'ตั้งใจจ่ายเต็ม 8,000 บาท แม้จะต้องประหยัดมากเดือนนี้', sub:'เจ็บระยะสั้นแต่สะอาด ไม่มีดอกเบี้ยค้าง', cost:-8000, label:'−8,000', cls:'neg', quality:3},
+      {k:'C', t:'จ่าย 5,000 บาท แล้วค้างไว้ 3,000 บาท', sub:'ลดหนี้ได้มาก แต่ยังมีดอกเบี้ยจากส่วนที่ค้างอยู่', cost:-5000, label:'−5,000', cls:'neg', quality:2},
+    ],
+    bestOpt:1,
+    hint:'ดอกเบี้ยบัตรเครดิตที่ไม่จ่ายครบ = 18% ต่อปี ถ้าค้างไว้ 8,000 บาท จะเสียดอกเบี้ยปีละ 1,440 บาท นั่นเท่ากับทำงาน 2-3 วันฟรีๆ',
+    aiReady:'บัตรเครดิตดีมากถ้าจ่ายครบทุกเดือน แต่ถ้าจ่ายแค่ขั้นต่ำ ดอกเบี้ย 18% ต่อปีจะทำให้หนี้เพิ่มขึ้นเรื่อยๆ ลองคิดดูว่าคุ้มไหม',
+    resultGood:'ถูกต้องที่สุด! จ่ายเต็มยอดทุกเดือน คือวิธีใช้บัตรเครดิตที่ถูกต้อง ไม่มีดอกเบี้ย ได้ Points ฟรี และไม่มีหนี้สะสม 🏆',
+    resultOk:'ดีกว่าขั้นต่ำ แต่ยังมีดอกเบี้ยสะสมในส่วนที่ค้างอยู่ พยายามตั้งเป้าจ่ายเต็มยอดทุกเดือนเพื่อหยุดวงจรหนี้',
+    resultBad:'จ่ายขั้นต่ำคือกับดักหนี้ที่แย่ที่สุด! หนี้ 8,000 บาท ถ้าจ่ายแค่ขั้นต่ำทุกเดือน ต้องใช้เวลากว่า 3 ปีกว่าจะหมดหนี้ และเสียดอกเบี้ยไปเกือบ 4,000 บาท',
+    aiLearn:'บทเรียน: บัตรเครดิตควรใช้เหมือน "เดบิตที่จ่ายปลายเดือน" คือจ่ายเต็มยอดเสมอ ถ้าจ่ายไม่ไหวเต็ม แสดงว่าใช้เกินตัว',
+  },
+  {
+    emoji:'📚', bg:'#eff6ff',
+    tags:[{t:'การพัฒนาตัวเอง',c:'chip-blue'},{t:'สถานการณ์ที่ 9',c:'chip-soft'}],
+    title:'มีคอร์สออนไลน์น่าสนใจมาก!',
+    desc:'เจอคอร์สสอนทักษะ Data Analysis ราคา 3,500 บาท ที่บริษัทใหญ่หลายแห่งให้ความสำคัญ ถ้าเรียนจบมีโอกาสขึ้นเงินเดือน',
+    scenario:'💼 คอร์ส Data Analysis ราคา 3,500 บาท | ใช้เวลาเรียน 40 ชั่วโมง | โอกาสเพิ่มรายได้ในอีก 6–12 เดือน | มีโปรโมชั่นหมดอีก 3 วัน',
+    q:'คอร์ส 3,500 บาทอาจเพิ่มรายได้ คุณจะทำอะไร?',
+    opts:[
+      {k:'A', t:'ข้ามไปก่อน รอจนกว่าจะมีเงินเหลือมากกว่านี้', sub:'ไม่เสียเงินวันนี้ แต่ทักษะไม่พัฒนา โอกาสก็ไม่มา', cost:0, label:'±0', cls:'zero', quality:1},
+      {k:'B', t:'หาคอร์สฟรีใน YouTube แทน ประหยัดกว่า', sub:'ไม่เสียเงิน แต่คอนเทนต์ไม่เป็นระบบ อาจเรียนได้ช้ากว่า', cost:0, label:'±0 (ฟรี)', cls:'zero', quality:2},
+      {k:'C', t:'ลงทะเบียนเรียนเลย เพราะทักษะนี้ตรงกับงานที่ทำ', sub:'ลงทุน 3,500 วันนี้ ถ้าเงินเดือนเพิ่ม 2,000 คืนทุนใน 2 เดือน', cost:-3500, label:'−3,500', cls:'neg', quality:3},
+    ],
+    bestOpt:2,
+    hint:'ลงทุนในทักษะที่ตลาดต้องการ ถ้าทำให้รายได้เพิ่ม 2,000 บาท/เดือน คอร์ส 3,500 บาทนี้จะคืนทุนภายใน 2 เดือน',
+    aiReady:'การลงทุนในทักษะตัวเองต่างจากการซื้อของอื่นตรงที่ "ให้ผลตอบแทน" ลองคิดว่าถ้าเรียนจบแล้วรายได้เพิ่มขึ้น 2,000 บาท/เดือน คุ้มไหม?',
+    resultGood:'ฉลาดมาก! การลงทุนในทักษะเป็น ROI ที่ดีที่สุด ถ้าเงินเดือนเพิ่ม 2,000 บาท/เดือน คอร์สนี้คืนทุนใน 2 เดือน และให้ผลตอบแทนต่อไปอีกหลายปี 📈',
+    resultOk:'การตรวจสอบรีวิวก่อนเป็นสิ่งที่ดี แต่โปรโมชั่นอาจหมดก่อน ถ้ามั่นใจว่าทักษะนี้ตรงกับงานที่ทำ การตัดสินใจเร็วกว่าอาจดีกว่า',
+    resultBad:'ไม่ลงทุนในตัวเองเพราะ "เงินตึง" คือความผิดพลาดที่พบบ่อย ทักษะใหม่ที่ตลาดต้องการคือทรัพย์สินที่ไม่มีวันเสื่อมค่า',
+    aiLearn:'บทเรียน: แยก "ค่าใช้จ่าย" ออกจาก "การลงทุน" ค่าใช้จ่ายทำให้เงินหมดไป แต่การลงทุนในตัวเองคืนทุนพร้อมดอกเบี้ยในรูปรายได้ที่สูงขึ้น',
+  },
+  {
+    emoji:'🎉', bg:'#fdf2f8',
+    tags:[{t:'สังคมและแรงกดดัน',c:'chip-purple'},{t:'สถานการณ์ที่ 10',c:'chip-soft'}],
+    title:'งานวันเกิดเพื่อน ต้องไปแค่ไหน?',
+    desc:'เพื่อนสนิทจัดงานวันเกิดที่ร้านอาหารหรูกลางเมือง ทุกคนจะหารเท่ากัน ประมาณ 1,800 บาท/คน คุณไม่ค่อยมีเงินเดือนนี้',
+    scenario:'🎂 ค่าอาหารงานวันเกิด 1,800 บาท + ของขวัญ ≈ 700 บาท = รวม 2,500 บาท เงินในมือเดือนนี้มีน้อย แต่เพื่อนสำคัญมาก',
+    q:'งบไม่พอ แต่เพื่อนชวนงานวันเกิด คุณจะทำยังไง?',
+    opts:[
+      {k:'A', t:'บอกเพื่อนตรงๆ ว่าเดือนนี้งบจำกัด ไปได้แต่ขอซื้อแค่ 800 บาท', sub:'รักษาความสัมพันธ์ไว้ได้โดยไม่ต้องโกหกหรือสร้างหนี้', cost:-800, label:'−800', cls:'neg', quality:3},
+      {k:'B', t:'รูดบัตรเครดิตจ่ายค่าอาหาร+ของขวัญเต็มๆ 2,500 บาท', sub:'เพื่อนประทับใจ แต่สร้างหนี้บัตรเครดิตโดยไม่จำเป็น', cost:-2500, label:'−2,500 (เครดิต)', cls:'neg', quality:1},
+      {k:'C', t:'แก้ตัวว่าติดนัดสำคัญ ไม่ไปเลยดีกว่า', sub:'ไม่เสียเงิน แต่เพื่อนอาจรู้สึกว่าไม่ใส่ใจ ความสัมพันธ์เสียได้', cost:0, label:'±0', cls:'zero', quality:2},
+    ],
+    bestOpt:0,
+    hint:'เพื่อนแท้เข้าใจสถานการณ์การเงิน การบอกตรงๆ ว่า "เดือนนี้เงินตึง" ไม่ใช่เรื่องน่าอาย แต่ดีกว่าสร้างหนี้เพื่อรักษาหน้า',
+    aiReady:'แรงกดดันทางสังคม (Social Pressure) เป็นสาเหตุใหญ่ที่ทำให้คนใช้เงินเกินตัว ลองคิดว่าเพื่อนแท้จะเข้าใจถ้าคุณบอกความจริงไหม',
+    resultGood:'กล้าหาญมาก! การสื่อสารตรงๆ เกี่ยวกับการเงินเป็นทักษะสำคัญ เพื่อนแท้จะเข้าใจและเคารพการตัดสินใจที่รับผิดชอบของคุณ และยังได้ร่วมงานด้วย 💪',
+    resultOk:'การไม่ไปเลยช่วยประหยัดเงิน แต่อาจเสียความสัมพันธ์ได้ การสื่อสารตรงๆ เป็นทางออกที่ดีกว่าการหลีกเลี่ยง',
+    resultBad:'ใช้บัตรเครดิตเพื่อรักษาหน้าคือกับดัน "ใช้จ่ายตามสังคม" ที่พบบ่อยมาก หนี้ที่เกิดจาก Social Pressure มักนำไปสู่วงจรหนี้ที่หลุดยาก',
+    aiLearn:'บทเรียน: แรงกดดันทางสังคม (FOMO / Fear of Missing Out) เป็นสาเหตุที่ 1 ที่ทำให้คนใช้จ่ายเกินตัว การตั้งขอบเขตทางการเงินและสื่อสารตรงๆ คือทักษะสำคัญ',
+  },
+];
+
+/* ═══════ STATE ═══════ */
+let G={round:0,score:0,money:15000,selected:null,submitted:false,history:[],hintsThisRound:0};
+
+function startGame(){
+  G={round:0,score:0,money:15000,selected:null,submitted:false,history:[],hintsThisRound:0};
+  document.getElementById('topbar').style.display='flex';
+  renderRound();
+  goTo('s1');
+}
+function showIntro(){
+  document.getElementById('topbar').style.display='none';
+  goTo('s0');
+}
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+
+function renderRound(){
+  const r=ROUNDS[G.round];
+  // topbar
+  document.getElementById('tb-money').textContent=G.money.toLocaleString();
+  const N=ROUNDS.length;
+  document.getElementById('tb-round').textContent=`สถานการณ์ ${G.round+1}/${N}`;
+  // progress
+  const pr=document.getElementById('progress-row');
+  let html='';
+  for(let i=0;i<N;i++){
+    if(i>0)html+=`<div class="prog-line"></div>`;
+    const cls=i<G.round?'done':i===G.round?'current':'';
+    html+=`<div class="prog-dot ${cls}">${i+1}</div>`;
+  }
+  html+=`<div style="flex:1"></div><div class="prog-label" id="prog-label">${r.title}</div>`;
+  pr.innerHTML=html;
+  // card
+  document.getElementById('sit-emoji').textContent=r.emoji;
+  document.getElementById('sit-emoji').style.background=r.bg;
+  document.getElementById('sit-tags').innerHTML=r.tags.map(t=>`<span class="chip ${t.c}" style="font-size:11px;padding:3px 8px">${t.t}</span>`).join('');
+  document.getElementById('sit-title').textContent=r.title;
+  document.getElementById('sit-desc').textContent=r.desc;
+  document.getElementById('sit-scenario').textContent=r.scenario;
+  document.getElementById('sit-q').textContent=r.q;
+  // options
+  const ow=document.getElementById('options-wrap');
+  ow.innerHTML=r.opts.map((o,i)=>`
+    <div class="opt" data-i="${i}" onclick="selectOpt(${i})">
+      <div class="opt-badge">${o.k}</div>
+      <div class="opt-text">${o.t}<small>${o.sub}</small></div>
+      <div class="opt-cost ${o.cls}">${o.label}</div>
+    </div>
+  `).join('');
+  // reset
+  G.selected=null;G.submitted=false;G.hintsThisRound=0;
+  document.getElementById('btn-confirm').disabled=true;
+  document.getElementById('btn-confirm').textContent='ยืนยันการเลือก ✓';
+  document.getElementById('btn-confirm').onclick=confirmChoice;
+  document.getElementById('result-panel').classList.remove('show');
+  document.getElementById('result-panel').innerHTML='';
+  setAI(r.aiReady);
+  document.getElementById('ai-status').textContent='พร้อมช่วยเหลือ ✦';
+  updateSidebar();
+  updateMoneyBar();
+}
+
+function selectOpt(i){
+  if(G.submitted)return;
+  G.selected=i;
+  document.querySelectorAll('.opt').forEach((el,j)=>el.classList.toggle('selected',j===i));
+  document.getElementById('btn-confirm').disabled=false;
+}
+
+function confirmChoice(){
+  if(G.selected===null||G.submitted)return;
+  G.submitted=true;
+  const r=ROUNDS[G.round];
+  const opt=r.opts[G.selected];
+  const isGood=(G.selected===r.bestOpt);
+  const pts=isGood?100:G.selected===r.opts.findIndex(o=>o.quality===2)?60:30;
+  G.score+=pts-(G.hintsThisRound*10);
+  G.money=Math.max(0,G.money+opt.cost);
+  G.history.push({round:G.round,opt,isGood,pts});
+  // mark
+  document.querySelectorAll('.opt').forEach((el,i)=>{
+    el.classList.remove('selected');
+    if(i===G.selected)el.classList.add(isGood?'correct':'wrong');
+    else el.classList.add('dimmed');
+  });
+  // result
+  const rp=document.getElementById('result-panel');
+  const quality=isGood?'good':G.selected===r.opts.findIndex(o=>o.quality===2)?'ok':'bad';
+  const msgs={good:r.resultGood,ok:r.resultOk,bad:r.resultBad};
+  const titles={good:`✅ ยอดเยี่ยม! +${pts} pts`,ok:`🟡 พอใช้ได้ +${pts} pts`,bad:`❌ มีทางที่ดีกว่า +${pts} pts`};
+  rp.innerHTML=`
+    <div class="result-box ${quality}">
+      <div class="result-title ${quality}">${titles[quality]}</div>
+      <div class="result-text">${msgs[quality]}</div>
+    </div>
+    <div class="result-box ok" style="border-color:#a78bfa;background:#f5f3ff">
+      <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:.3rem">💡 FINN บอกว่า...</div>
+      <div class="result-text" style="font-size:12.5px">${r.aiLearn}</div>
+    </div>
+  `;
+  rp.classList.add('show');
+  setAI(msgs[quality]);
+  document.getElementById('ai-status').textContent='วิเคราะห์แล้ว ✓';
+  updateSidebar();
+  updateMoneyBar();
+  // next button
+  const btn=document.getElementById('btn-confirm');
+  if(G.round<ROUNDS.length-1){
+    btn.textContent='สถานการณ์ถัดไป →';
+    btn.disabled=false;
+    btn.onclick=()=>{G.round++;renderRound();};
+  } else {
+    btn.textContent='ดูผลสรุป 🏆';
+    btn.disabled=false;
+    btn.onclick=showFinal;
+  }
+}
+
+function getHint(){
+  if(G.submitted)return;
+  G.hintsThisRound++;
+  G.score=Math.max(0,G.score-10);
+  setAI(ROUNDS[G.round].hint);
+  document.getElementById('ai-status').textContent='ให้ Hint แล้ว (−10 pts)';
+  updateSidebar();
+}
+
+function setAI(msg){
+  const el=document.getElementById('ai-msg');
+  el.textContent=msg;
+  el.style.animation='none';
+  void el.offsetWidth;
+  el.style.animation='popIn .2s ease';
+}
+
+function updateMoneyBar(){
+  const pct=Math.min(100,Math.round(G.money/15000*100));
+  document.getElementById('money-bar-fill').style.width=pct+'%';
+  document.getElementById('money-bar-fill').style.background=pct>60?'var(--green)':pct>30?'var(--yellow)':'var(--red)';
+  document.getElementById('money-bar-val').textContent=G.money.toLocaleString();
+  document.getElementById('tb-money').textContent=G.money.toLocaleString();
+}
+
+function updateSidebar(){
+  document.getElementById('side-score').textContent=G.score;
+  document.getElementById('side-round').textContent=`${Math.min(G.round+1,ROUNDS.length)}/${ROUNDS.length}`;
+  const dh=document.getElementById('dec-history');
+  if(G.history.length===0){dh.innerHTML='<div style="font-size:12px;color:var(--soft);padding:.35rem .55rem">ยังไม่มีการตัดสินใจ</div>';return;}
+  dh.innerHTML=G.history.map(h=>`
+    <div class="dec-row">
+      <div class="dot ${h.isGood?'g':h.pts>=60?'y':'r'}"></div>
+      <span>R${h.round+1}: ${h.opt.t.substring(0,24)}...</span>
+    </div>
+  `).join('');
+}
+
+function showFinal(){
+  const total=G.history.reduce((s,h)=>s+h.pts,0);
+  const good=G.history.filter(h=>h.isGood).length;
+  const maxPts=ROUNDS.length*100;
+  const pct=Math.round(total/maxPts*100);
+  const grade=pct>=90?'S':pct>=75?'A':pct>=60?'B':pct>=40?'C':'D';
+  const gradeColor={S:'#f59e0b',A:'#16a34a',B:'#3b82f6',C:'#d97706',D:'#dc2626'};
+  const taglines={
+    S:'ผู้บริหารเงินระดับพระกาฬ! คิดรอบคอบทุกขั้นตอน',
+    A:'นักบริหารเงินมือฉมัง! ตัดสินใจได้ดีมาก',
+    B:'เข้าใจพื้นฐานดีแล้ว มีบางจุดที่พัฒนาได้',
+    C:'เริ่มเข้าใจแล้ว ฝึกเพิ่มก็จะดีขึ้น',
+    D:'ยังมีเรื่องให้เรียนรู้อีกมาก ลองเล่นใหม่ได้เลย!',
+  };
+  document.getElementById('fh-grade').textContent=grade;
+  document.getElementById('fh-grade').style.borderColor=gradeColor[grade];
+  document.getElementById('fh-grade').style.color=gradeColor[grade];
+  document.getElementById('fh-bg').textContent=grade;
+  document.getElementById('fh-score').textContent=`${G.score} pts`;
+  document.getElementById('fh-stars').textContent=good>=8?'★★★':good>=5?'★★☆':'★☆☆';
+  document.getElementById('fh-sub').textContent=taglines[grade]+` | เงินเหลือ ${G.money.toLocaleString()} บาท`;
+  // log
+  document.getElementById('final-log').innerHTML=G.history.map(h=>{
+    const r=ROUNDS[h.round];
+    const q=h.isGood?'chip-green':h.pts>=60?'chip-yellow':'chip-red';
+    const ql=h.isGood?'ยอดเยี่ยม':h.pts>=60?'พอใช้ได้':'มีวิธีที่ดีกว่า';
+    return `
+      <div class="dl-row">
+        <div class="dl-icon">${r.emoji}</div>
+        <div class="dl-right">
+          <div class="dl-q">${r.title}</div>
+          <div class="dl-choice">เลือก: ${h.opt.t.substring(0,40)}...</div>
+          <div class="dl-chips">
+            <span class="chip ${q}" style="font-size:10px;padding:2px 8px">${ql}</span>
+            <span class="chip chip-soft" style="font-size:10px;padding:2px 8px">+${h.pts} pts</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  // AI
+  const summaries={
+    S:`สุดยอดมาก! ${good}/10 สถานการณ์เลือกได้ดีที่สุด คุณเข้าใจทุกหลักการ ตั้งแต่ Fixed Cost, Want vs Need, สิทธิ์สวัสดิการ, การออม, หนี้บัตรเครดิต ไปจนถึงแรงกดดันทางสังคม`,
+    A:`ทำได้ดีมาก! ${good}/10 สถานการณ์เลือกได้ถูกต้อง คุณมีรากฐานการเงินที่แข็งแกร่ง ลองกลับไปดูสถานการณ์ที่ยังผิดพลาดเพื่อเรียนรู้เพิ่มเติม`,
+    B:`เข้าใจหลักการได้ดีแล้ว ${good}/10 สถานการณ์ถูกต้อง มีบางจุดที่ยังลังเล ลองเล่นใหม่และดูว่าจะตัดสินใจต่างออกไปอย่างไร`,
+    C:`เริ่มต้นได้แล้ว ${good}/10 สถานการณ์ถูกต้อง การบริหารเงินเป็นทักษะที่ฝึกได้ อ่านบทเรียนจาก FINN ในแต่ละข้อให้ดีแล้วลองอีกครั้ง`,
+    D:`ไม่เป็นไร! เกมนี้ออกแบบมาเพื่อให้เรียนรู้จากการลองผิดลองถูก ทุกข้อที่ผิดมีบทเรียนซ่อนอยู่ ลองเล่นใหม่แล้วดูว่าจะเปลี่ยนการเลือกไหน`,
+  };
+  document.getElementById('af-text').textContent=summaries[grade];
+  const tips=[
+    {i:'🏠',t:'<strong>Fixed Cost</strong>: ค่าใช้จ่ายคงที่ลดได้แม้แต่ 500 บาท/เดือน = 6,000 บาท/ปี'},
+    {i:'🎯',t:'<strong>Want vs Need</strong>: ถามตัวเองก่อนซื้อทุกครั้งว่า "ต้องการจริงหรืออยากได้?"'},
+    {i:'🏥',t:'<strong>รู้จักสิทธิ์</strong>: บัตรทอง ประกันสังคม ประกันสุขภาพ ช่วยลดค่าฉุกเฉินได้มาก'},
+    {i:'🌱',t:'<strong>ออมก่อนใช้</strong>: โอนเงินออมทันทีที่ได้รับเงินเดือน ก่อนจะ "ลืม" ออม'},
+    {i:'🍜',t:'<strong>ค่าอาหาร</strong>: ค่าใช้จ่ายแปรผันที่ควบคุมได้ง่ายที่สุด ลด 30% = ออมได้เดือนละพัน'},
+    {i:'📱',t:'<strong>Subscription Audit</strong>: ทำทุก 3 เดือน ยกเลิกที่ไม่ได้ใช้ ประหยัดได้มากโดยไม่รู้ตัว'},
+    {i:'🚗',t:'<strong>Hidden Cost</strong>: รถยนต์มีต้นทุนซ่อน ระบบขนส่งสาธารณะมักถูกกว่ามาก'},
+    {i:'💳',t:'<strong>บัตรเครดิต</strong>: ดีมากถ้าจ่ายครบทุกเดือน แย่มากถ้าจ่ายแค่ขั้นต่ำ'},
+    {i:'📚',t:'<strong>ลงทุนในตัวเอง</strong>: ทักษะใหม่ที่ตลาดต้องการคืน ROI ที่ดีที่สุดในระยะยาว'},
+    {i:'🎉',t:'<strong>Social Pressure</strong>: อย่าใช้เงินเกินตัวเพื่อรักษาหน้า เพื่อนแท้เข้าใจเสมอ'},
+  ];
+  document.getElementById('af-tips').innerHTML=tips.map(t=>`
+    <div class="af-tip">
+      <div class="af-tip-icon">${t.i}</div>
+      <div class="af-tip-text">${t.t}</div>
+    </div>
+  `).join('');
+  document.getElementById('topbar').style.display='none';
+  goTo('s2');
+}
+</script>
+</body>
+</html>
